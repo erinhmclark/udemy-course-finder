@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "udemy-course-finder"
+version = "0.1.0"
+description = "Extract information on Udemy courses."
+authors = ["erinhmclark <erinhannahmary.clark@gmail.com>"]
+readme = "README.md"
+packages = [{include = "udemy_course_finder"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+beautifulsoup4 = "^4.11.2"
+
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
