@@ -1,6 +1,5 @@
-""" A basic scraper to collect information on Udemy Python courses.
+""" A basic script to collect information on Udemy Python courses from a HTML file.
     * This is intended to show various methods of extraction, rather than the best method *
-    [This site has an underlying API which would be the most efficient method of collection.]
 """
 from pathlib import Path
 from bs4 import BeautifulSoup
