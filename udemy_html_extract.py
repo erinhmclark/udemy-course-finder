@@ -7,7 +7,7 @@ import pandas as pd
 
 CWD = Path.cwd()
 INPUT_HTML_FILE = Path.joinpath(CWD, 'static_files', 'udemy_python_courses_page_1.html')
-OUTPUT_CSV_FILE = Path.joinpath(CWD, 'output_files', 'course_details.csv')
+OUTPUT_CSV_FILE = Path.joinpath(CWD, 'output_files', 'raw_course_details.csv')
 UDEMY_BASE_URL = 'https://udemy.com'
 
 
