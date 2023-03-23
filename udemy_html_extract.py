@@ -4,10 +4,12 @@
 from pathlib import Path
 from bs4 import BeautifulSoup
 import pandas as pd
+import json
 
 CWD = Path.cwd()
-INPUT_HTML_FILE = Path.joinpath(CWD, 'static_files', 'udemy_python_courses_page_1.html')
+INPUT_HTML_FILE = Path.joinpath(CWD, 'temp_files', 'udemy_python_courses_page_1.html')
 OUTPUT_CSV_FILE = Path.joinpath(CWD, 'output_files', 'raw_course_details.csv')
+OUTPUT_JSON_FILE = Path.joinpath(CWD, 'output_files', 'raw_course_details.json')
 UDEMY_BASE_URL = 'https://udemy.com'
 
 
@@ -63,6 +65,12 @@ def insert_dicts_to_csv(dict_list, csv_path):
     df.to_csv(csv_path)
 
 
+def insert_dict_to_json(dict_list, json_path):
+    """ Insert a list of python dictionaries into a json file. """
+    with open(json_path, 'w') as json_file_obj:
+        json.dump(dict_list, json_file_obj)
+
+
 if __name__ == '__main__':
     udemy_html = read_file(INPUT_HTML_FILE)
     udemy_soup = BeautifulSoup(udemy_html, 'html.parser')
@@ -70,4 +78,5 @@ if __name__ == '__main__':
     course_details = []
     for course in course_list_section:
         course_details.append(fetch_course_overview(course))
+    insert_dict_to_json(course_details, OUTPUT_JSON_FILE)
     insert_dicts_to_csv(course_details, OUTPUT_CSV_FILE)
