@@ -1,6 +1,7 @@
 """ A basic script to collect information on Udemy Python courses from a HTML file.
     * This is intended to demonstrate extraction using the BS4 module, rather than the best method *
 """
+from typing import List, Dict
 from pathlib import Path
 from bs4 import BeautifulSoup
 from file_utils import read_text_file, write_json_file
@@ -11,14 +12,14 @@ INPUT_HTML_FILE = Path.joinpath(CWD, 'temp_files', 'udemy_python_courses_page_1.
 OUTPUT_JSON_FILE = Path.joinpath(CWD, 'output_files', 'raw_course_details.json')
 
 
-def fetch_course_list(soup):
+def fetch_course_list(soup: BeautifulSoup) -> List[BeautifulSoup]:
     """ Fetch the section of the page source containing the list of courses. """
     list_soup = soup.find('div', class_='course-list--container--FuG0T') \
-        .findAll('div', class_='popper-module--popper--2BpLn')
+                    .findAll('div', class_='popper-module--popper--2BpLn')
     return list_soup
 
 
-def get_text_section_from_block(soup_section, index):
+def get_text_section_from_block(soup_section: BeautifulSoup, index: int) -> str:
     """ Extract text from HTML block where the desired content is not separated by logical tags.
     """
     for i, section in enumerate(soup_section.childGenerator()):
@@ -26,7 +27,7 @@ def get_text_section_from_block(soup_section, index):
             return section
 
 
-def fetch_course_overview(course_section):
+def fetch_course_overview(course_section: BeautifulSoup) -> Dict[str, str]:
     """ Extract the details of a single course and return a dictionary. """
     course_dict = {}
     title_section = course_section.find('h3', {'data-purpose': 'course-title-url'}).find('a')
