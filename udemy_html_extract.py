@@ -3,21 +3,13 @@
 """
 from pathlib import Path
 from bs4 import BeautifulSoup
-import pandas as pd
-import json
+from file_utils import read_file, insert_dict_to_json, insert_dicts_to_csv
 
 CWD = Path.cwd()
+UDEMY_BASE_URL = 'https://udemy.com'
 INPUT_HTML_FILE = Path.joinpath(CWD, 'temp_files', 'udemy_python_courses_page_1.html')
 OUTPUT_CSV_FILE = Path.joinpath(CWD, 'output_files', 'raw_course_details.csv')
 OUTPUT_JSON_FILE = Path.joinpath(CWD, 'output_files', 'raw_course_details.json')
-UDEMY_BASE_URL = 'https://udemy.com'
-
-
-def read_file(file_path):
-    """ Open and read a file. """
-    with open(file_path, 'r') as file_obj:
-        file_content = file_obj.read()
-    return file_content
 
 
 def fetch_course_list(soup):
@@ -28,14 +20,11 @@ def fetch_course_list(soup):
 
 
 def get_from_mixed_strings(soup_section, index):
-    """ Extract text by index from nested elements,
-        and replace excessive whitespace with a single space.
+    """ Extract text by index from nested elements.
     """
     for i, section in enumerate(soup_section.childGenerator()):
         if i == index:
-            text_list = section.text.split()
-            clean_text = ' '.join([t for t in text_list])
-            return clean_text
+            return section
 
 
 def fetch_course_overview(course_section):
@@ -45,9 +34,11 @@ def fetch_course_overview(course_section):
     course_dict['title'] = get_from_mixed_strings(title_section, 0)
     course_dict['course_url'] = f'{UDEMY_BASE_URL}{title_section.get("href")}'
     course_dict['description'] = course_section.find('p',
-                                                     class_='ud-text-sm course-card--course-headline--2DAqq').text.strip()
+                                                     class_='ud-text-sm course-card--course-headline--2DAqq'
+                                                     ).text.strip()
     course_dict['instructor'] = course_section.find('div',
-                                {'data-purpose': 'safely-set-inner-html:course-card:visible-instructors'}).text.strip()
+                                                    {
+                                                        'data-purpose': 'safely-set-inner-html:course-card:visible-instructors'}).text.strip()
     course_dict['rating'] = course_section.find('span', {'data-purpose': 'rating-number'}).text
     course_dict['num_ratings'] = course_section.find('span', class_='ud-text-xs course-card--reviews-text--1yloi').text
     course_metadata = course_section.find('div', {'data-purpose': 'course-meta-info'}).findAll('span')
@@ -57,18 +48,6 @@ def fetch_course_overview(course_section):
     course_dict['current_price_string'] = course_section.find('span', string='Current price').findNext('span').text
     course_dict['original_price_string'] = course_section.find('span', string='Original Price').findNext('span').text
     return course_dict
-
-
-def insert_dicts_to_csv(dict_list, csv_path):
-    """ Insert a list of Python dictionaries to a csv using the Pandas module. """
-    df = pd.DataFrame.from_dict(dict_list)
-    df.to_csv(csv_path)
-
-
-def insert_dict_to_json(dict_list, json_path):
-    """ Insert a list of python dictionaries into a json file. """
-    with open(json_path, 'w') as json_file_obj:
-        json.dump(dict_list, json_file_obj)
 
 
 if __name__ == '__main__':
