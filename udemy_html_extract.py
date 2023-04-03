@@ -3,12 +3,11 @@
 """
 from pathlib import Path
 from bs4 import BeautifulSoup
-from file_utils import read_file, insert_dict_to_json, insert_dicts_to_csv
+from file_utils import read_text_file, write_json_file
 
 CWD = Path.cwd()
 UDEMY_BASE_URL = 'https://udemy.com'
 INPUT_HTML_FILE = Path.joinpath(CWD, 'temp_files', 'udemy_python_courses_page_1.html')
-OUTPUT_CSV_FILE = Path.joinpath(CWD, 'output_files', 'raw_course_details.csv')
 OUTPUT_JSON_FILE = Path.joinpath(CWD, 'output_files', 'raw_course_details.json')
 
 
@@ -19,8 +18,8 @@ def fetch_course_list(soup):
     return list_soup
 
 
-def get_from_mixed_strings(soup_section, index):
-    """ Extract text by index from nested elements.
+def get_text_section_from_block(soup_section, index):
+    """ Extract text from HTML block where the desired content is not separated by logical tags.
     """
     for i, section in enumerate(soup_section.childGenerator()):
         if i == index:
@@ -31,14 +30,13 @@ def fetch_course_overview(course_section):
     """ Extract the details of a single course and return a dictionary. """
     course_dict = {}
     title_section = course_section.find('h3', {'data-purpose': 'course-title-url'}).find('a')
-    course_dict['title'] = get_from_mixed_strings(title_section, 0)
+    course_dict['title'] = get_text_section_from_block(title_section, 0)
     course_dict['course_url'] = f'{UDEMY_BASE_URL}{title_section.get("href")}'
-    course_dict['description'] = course_section.find('p',
-                                                     class_='ud-text-sm course-card--course-headline--2DAqq'
+    course_dict['description'] = course_section.find('p', class_='ud-text-sm course-card--course-headline--2DAqq'
                                                      ).text.strip()
-    course_dict['instructor'] = course_section.find('div',
-                                                    {
-                                                        'data-purpose': 'safely-set-inner-html:course-card:visible-instructors'}).text.strip()
+    course_dict['instructor'] = course_section.find('div', {'data-purpose':
+                                                            'safely-set-inner-html:course-card:visible-instructors'}
+                                                    ).text.strip()
     course_dict['rating'] = course_section.find('span', {'data-purpose': 'rating-number'}).text
     course_dict['num_ratings'] = course_section.find('span', class_='ud-text-xs course-card--reviews-text--1yloi').text
     course_metadata = course_section.find('div', {'data-purpose': 'course-meta-info'}).findAll('span')
@@ -51,11 +49,10 @@ def fetch_course_overview(course_section):
 
 
 if __name__ == '__main__':
-    udemy_html = read_file(INPUT_HTML_FILE)
+    udemy_html = read_text_file(INPUT_HTML_FILE)
     udemy_soup = BeautifulSoup(udemy_html, 'html.parser')
     course_list_section = fetch_course_list(udemy_soup)
     course_details = []
     for course in course_list_section:
         course_details.append(fetch_course_overview(course))
-    insert_dict_to_json(course_details, OUTPUT_JSON_FILE)
-    insert_dicts_to_csv(course_details, OUTPUT_CSV_FILE)
+    write_json_file(OUTPUT_JSON_FILE, course_details)
