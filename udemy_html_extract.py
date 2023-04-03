@@ -1,5 +1,5 @@
 """ A basic script to collect information on Udemy Python courses from a HTML file.
-    * This is intended to show various methods of extraction, rather than the best method *
+    * This is intended to demonstrate extraction using the BS4 module, rather than the best method *
 """
 from pathlib import Path
 from bs4 import BeautifulSoup
