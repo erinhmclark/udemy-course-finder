@@ -1,5 +1,8 @@
 """ A basic script to collect information on Udemy Python courses from a HTML file.
-    * This is intended to demonstrate extraction using the BS4 module, rather than the best method *
+
+    *This is intended to demonstrate extraction using the BS4 module, rather than the best method*
+    The HTML was collected separately via automation methods and stored in an intermediate file.
+
 """
 from typing import List, Dict
 from pathlib import Path
@@ -13,9 +16,11 @@ OUTPUT_JSON_FILE = Path.joinpath(CWD, 'output_files', 'raw_course_details.json')
 
 
 def fetch_course_list(soup: BeautifulSoup) -> List[BeautifulSoup]:
-    """ Fetch the section of the page source containing the list of courses. """
+    """
+    Extract the section of the page source containing the list of courses.
+    """
     list_soup = soup.find('div', class_='course-list--container--FuG0T') \
-                    .findAll('div', class_='popper-module--popper--2BpLn')
+        .findAll('div', class_='popper-module--popper--2BpLn')
     return list_soup
 
 
@@ -24,7 +29,7 @@ def get_text_section_from_block(soup_section: BeautifulSoup, index: int) -> str:
     """
     for i, section in enumerate(soup_section.childGenerator()):
         if i == index:
-            return section
+            return section.text
 
 
 def fetch_course_overview(course_section: BeautifulSoup) -> Dict[str, str]:
@@ -36,7 +41,7 @@ def fetch_course_overview(course_section: BeautifulSoup) -> Dict[str, str]:
     course_dict['description'] = course_section.find('p', class_='ud-text-sm course-card--course-headline--2DAqq'
                                                      ).text.strip()
     course_dict['instructor'] = course_section.find('div', {'data-purpose':
-                                                            'safely-set-inner-html:course-card:visible-instructors'}
+                                                                'safely-set-inner-html:course-card:visible-instructors'}
                                                     ).text.strip()
     course_dict['rating'] = course_section.find('span', {'data-purpose': 'rating-number'}).text
     course_dict['num_ratings'] = course_section.find('span', class_='ud-text-xs course-card--reviews-text--1yloi').text
