@@ -1,6 +1,8 @@
 """ A basic script to collect information on Udemy Python courses from a HTML file.
 
-    *This is intended to demonstrate extraction using the BS4 module, rather than the best method*
+    *This is intended to demonstrate extraction using the BS4 module,
+    Udemy actually has an available API which would be the best methods of collection*
+
     The HTML was collected separately via automation methods and stored in an intermediate file.
 
 """
