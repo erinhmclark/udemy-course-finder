@@ -9,7 +9,8 @@ packages = [{include = "udemy_course_finder"}]
 [tool.poetry.dependencies]
 python = "^3.9"
 beautifulsoup4 = "^4.11.2"
-pandas = "^1.5.3"
+sqlite-utils = "^3.30"
+pandas = "^2.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
