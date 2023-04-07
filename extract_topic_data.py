@@ -43,7 +43,7 @@ def fetch_course_overview(course_section: BeautifulSoup) -> Dict[str, str]:
     course_dict['description'] = course_section.find('p', class_='ud-text-sm course-card--course-headline--2DAqq'
                                                      ).text.strip()
     course_dict['instructor'] = course_section.find('div', {'data-purpose':
-                                                                'safely-set-inner-html:course-card:visible-instructors'}
+                                                            'safely-set-inner-html:course-card:visible-instructors'}
                                                     ).text.strip()
     course_dict['rating'] = course_section.find('span', {'data-purpose': 'rating-number'}).text
     course_dict['num_ratings'] = course_section.find('span', class_='ud-text-xs course-card--reviews-text--1yloi').text
