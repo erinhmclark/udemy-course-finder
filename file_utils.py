@@ -1,6 +1,7 @@
 """ Functions to read and write from files in different formats.
 
-    The priority here is on a functional programming style, focussing on readability and testability.
+    The priority here is on a functional programming style,
+    focussing on readability and testability.
 """
 import json
 import pandas as pd
