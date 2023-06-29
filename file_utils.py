@@ -37,3 +37,12 @@ def write_json_file(filepath: Path, content: List[Dict]):
     """Write a list of dictionaries to a JSON file."""
     with open(filepath, 'w') as json_file_obj:
         json.dump(content, json_file_obj)
+
+
+def fetch_all_file_paths(directory: str) -> List[Path]:
+    """
+    Function to fetch all file paths in a given directory.
+    """
+    directory_path = Path(directory)
+    file_paths = [path for path in directory_path.glob('**/*') if path.is_file()]
+    return file_paths

@@ -7,14 +7,13 @@
 
 """
 from typing import List, Dict
-from pathlib import Path
 from bs4 import BeautifulSoup
-from file_utils import read_text_file, write_json_file
+from file_utils import read_text_file, write_json_file, fetch_all_file_paths
 
-CWD = Path.cwd()
-UDEMY_BASE_URL = 'https://udemy.com'
-INPUT_HTML_FILE = Path.joinpath(CWD, 'temp_files', 'udemy_python_courses_page_1.html')
-OUTPUT_JSON_FILE = Path.joinpath(CWD, 'output_files', 'raw_course_details.json')
+from settings import UDEMY_BASE_URL, TEMP_FILES, OUTPUT_JSON_FILE
+from logging_config import configure_logger
+
+logger = configure_logger(__name__)
 
 
 def fetch_course_list(soup: BeautifulSoup) -> List[BeautifulSoup]:
@@ -52,15 +51,21 @@ def fetch_course_overview(course_section: BeautifulSoup) -> Dict[str, str]:
     course_dict['num_lectures_string'] = course_metadata[1].text
     course_dict['course_level'] = course_metadata[2].text
     course_dict['current_price_string'] = course_section.find('span', string='Current price').findNext('span').text
-    course_dict['original_price_string'] = course_section.find('span', string='Original Price').findNext('span').text
+    try:
+        course_dict['original_price_string'] = course_section.find('span', string='Original Price').findNext('span').text
+    except AttributeError:
+        logger.info('No original price found, item may not be on offer.')
     return course_dict
 
 
 if __name__ == '__main__':
-    udemy_html = read_text_file(INPUT_HTML_FILE)
-    udemy_soup = BeautifulSoup(udemy_html, 'html.parser')
-    course_list_section = fetch_course_list(udemy_soup)
+
     course_details = []
-    for course in course_list_section:
-        course_details.append(fetch_course_overview(course))
+    for p, page in enumerate(fetch_all_file_paths(TEMP_FILES), 1):
+        logger.debug(f'Scraping page {p}.')
+        udemy_html = read_text_file(page)
+        udemy_soup = BeautifulSoup(udemy_html, 'html.parser')
+        course_list_section = fetch_course_list(udemy_soup)
+        for course in course_list_section:
+            course_details.append(fetch_course_overview(course))
     write_json_file(OUTPUT_JSON_FILE, course_details)
