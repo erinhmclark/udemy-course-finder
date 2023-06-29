@@ -49,6 +49,7 @@ def navigate_to_next_page(driver: uc.Chrome) -> None:
     """ Navigate the driver to the next page. """
     try:
         driver.find_element(By.XPATH, NEXT_PAGE_XPATH).click()
+        time.sleep(1 + uniform(0, 3))
     except NoSuchElementException:
         print("Reached the last page, unable to find the next page button.")
 
@@ -58,7 +59,7 @@ def crawl_main_page(url: str) -> uc.Chrome:
     driver = get_driver()
     load_url(driver, url)
     handle_cookies(driver)
-    time.sleep(1 + uniform(0, 3))
+    time.sleep(2 + uniform(0, 3))
     return driver
 
 
