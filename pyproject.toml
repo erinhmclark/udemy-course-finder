@@ -11,6 +11,7 @@ python = "^3.9"
 beautifulsoup4 = "^4.11.2"
 sqlite-utils = "^3.30"
 pandas = "^2.0.0"
+undetected-chromedriver = "^3.5.0"
 
 
 [tool.poetry.group.dev.dependencies]
